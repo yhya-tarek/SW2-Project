@@ -1,83 +1,38 @@
-const CONNECTION = require("../db/connection");
-const conn = new CONNECTION();
-const connection = conn.Connection();
+const REQUESTDB = require("../models/RequestDb");
 
 class REQUEST {
-  constructor() {}
   getRequests = () => {
     return (req, res) => {
-      const sql = `SELECT * FROM request_job`;
-      connection.query(sql, (err, data) => {
-        if (err) return res.json(err);
-        return res.json(data);
-      });
+      const requestDB = new REQUESTDB();
+      requestDB.GetRequests(req, res);
     };
   };
 
   getRequest = () => {
     return (req, res) => {
-      const { user_id } = req.params;
-      const sql = `SELECT * FROM request_job where user_id = ${user_id}`;
-      connection.query(sql, (err, data) => {
-        if (err) return res.json(err);
-        return res.json(data);
-      });
+      const requestDB = new REQUESTDB();
+      requestDB.GetRequest(req, res);
     };
   };
 
   sendRequest = () => {
     return (req, res) => {
-      const sql = `select * from request_job where user_id = ${req.body.user_id} and job_id = ${req.body.job_id}`;
-      connection.query(sql, (err, result, fields) => {
-        if (err) {
-          return res.json(err);
-        } else if (!result[0]) {
-          const date = new Date();
-          const sql =
-            "INSERT INTO request_job (`user_id`,`job_id`,`response`,`date`) VALUES (?)";
-          const values = [
-            req.body.user_id,
-            req.body.job_id,
-            3,
-            date.toISOString().slice(0, 10),
-          ];
-          connection.query(sql, [values], (err, data) => {
-            if (err) return res.json(err);
-            return res.status(201).json(data);
-          });
-        } else {
-          return res
-            .status(400)
-            .json({ msg: "you have already requested this job" });
-        }
-      });
+      const requestDB = new REQUESTDB();
+      requestDB.SendRequest(req, res);
     };
   };
 
   respondToRequest = () => {
     return (req, res) => {
-      const { user_id, job_id } = req.params;
-      const newData = req.body;
-      const sql = `update request_job set response = "${newData.response}" where user_id = ${user_id} and job_id = ${job_id}`;
-      connection.query(sql, (err) => {
-        if (err) {
-          res.status(400).json({ msg: err.sqlMessage });
-        } else {
-          res.status(200).json({ msg: "updated successfully" });
-        }
-      });
+      const requestDB = new REQUESTDB();
+      requestDB.RespondToRequest(req, res);
     };
   };
 
   deleteRequest = () => {
     return (req, res) => {
-      const user_id = req.params.user_id;
-      const job_id = req.params.job_id;
-      const sql = `DELETE FROM request_job WHERE user_id = ${user_id} and job_id = ${job_id}`;
-      connection.query(sql, (err, data) => {
-        if (err) return res.json(err);
-        return res.json(data);
-      });
+      const requestDB = new REQUESTDB();
+      requestDB.DeleteRequest(req, res);
     };
   };
 }
