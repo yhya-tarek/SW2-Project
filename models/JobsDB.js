@@ -1,31 +1,33 @@
 const CONNECTION = require("../db/connection");
 const conn = new CONNECTION();
 const connection = conn.Connection();
+//Dependency Inversion
 
 class JOBSDB {
-  GetJobs(req, res) {
-    const sql = ` SELECT *
-                  FROM job
-                  `;
-    connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
-    });
+
+  constructor(user) {
+    this.jobDB = new CRUD_JOBSDB(user)
   }
 
-  GetJob(req, res) {
-    const { job_id } = req.params;
-    const sql = ` SELECT *
-                  FROM job
-                  INNER JOIN job_qualifications 
-                      ON job.job_id=job_qualifications.job_id
-                  INNER JOIN qualification 
-                      ON job_qualifications.qualification_id=qualification.qualification_id
-                      where job.job_id = ${job_id}`;
-    connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
-    });
+  create_job() {
+    this.jobDB.CreateJob(req, res)
+  }
+
+  update_job() {
+    this.jobDB.UpdateJob(req, res)
+  }
+  delete_job() {
+    this.jobDB.DeleteJOb(req, res)
+  }
+
+  get_job() {
+    this.jobDB.GetJob(req, res)
+  }
+}
+
+class CRUD_JOBSDB {
+  constructor(user) {
+    this.user = user
   }
 
   CreateJob(req, res) {
@@ -153,5 +155,33 @@ class JOBSDB {
       }
     );
   }
+
+  GetJob(req, res) {
+    const { job_id } = req.params;
+    const sql = ` SELECT *
+                  FROM job
+                  INNER JOIN job_qualifications 
+                      ON job.job_id=job_qualifications.job_id
+                  INNER JOIN qualification 
+                      ON job_qualifications.qualification_id=qualification.qualification_id
+                      where job.job_id = ${job_id}`;
+    connection.query(sql, (err, data) => {
+      if (err) return res.json(err);
+      return res.json(data);
+    });
+  }
+}
+
+class GET_JOBS {
+  GetJobs(req, res) {
+    const sql = ` SELECT *
+                  FROM job
+                  `;
+    connection.query(sql, (err, data) => {
+      if (err) return res.json(err);
+      return res.json(data);
+    });
+  }
 }
 module.exports = JOBSDB;
+module.exports = GET_JOBS;

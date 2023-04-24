@@ -1,4 +1,7 @@
 const mysql = require("mysql");
+
+//Single Responsibility
+
 class CONNECTION {
   constructor() {
     this.Connection();

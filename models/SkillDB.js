@@ -2,16 +2,30 @@ const CONNECTION = require("../db/connection");
 const conn = new CONNECTION();
 const connection = conn.Connection();
 
-class SKILLDB {
-  GetSkills(req, res) {
-    connection.query("select * from skill", (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(404).json("failed to read files");
-      } else {
-        res.status(200).json(result);
-      }
-    });
+//Dependency Inversion
+
+class SKILL_DB {
+  constructor(user) {
+    this.skill = new CRUD_SKILL_DB(user)
+  }
+  Create_Skill() {
+    this.skill.CreateSkill(req, res)
+  }
+
+  Delete_Skill() {
+    this.skill.DeleteSkill(req, res)
+  }
+
+  Get_Skill() {
+    this.skill.GetSkill(req, res)
+  }
+
+
+}
+
+class CRUD_SKILL_DB {
+  constructor(user) {
+    this.user = user
   }
 
   GetSkill(req, res) {
@@ -65,4 +79,18 @@ class SKILLDB {
   }
 }
 
-module.exports = SKILLDB;
+class GET_SKILLS {
+  GetSkills(req, res) {
+    connection.query("select * from skill", (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(404).json("failed to read files");
+      } else {
+        res.status(200).json(result);
+      }
+    });
+  }
+}
+
+module.exports = SKILL_DB;
+module.exports = GET_SKILLS;

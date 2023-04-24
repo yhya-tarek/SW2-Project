@@ -2,15 +2,33 @@ const CONNECTION = require("../db/connection");
 const conn = new CONNECTION();
 const connection = conn.Connection();
 
-class QUALIFICATIONDB {
-  GetQualifications(req, res) {
-    connection.query(
-      "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
-      (err, result, fields) => {
-        if (err) console.log(err);
-        return res.status(200).json(result);
-      }
-    );
+//Dependency Inversion
+
+class QUALIFICATION_DB {
+  constructor(user) {
+    this.qualification = new CRUD_QUALIFICATION_DB(user)
+  }
+
+  create_qualification() {
+    this.qualification.CreateQualification(req, res)
+  }
+
+  get_qualification() {
+    this.qualification.GetQualification(req, res)
+  }
+
+  update_qualification() {
+    this.qualification.UpdateQualification(req, res)
+  }
+
+  delete_qualification() {
+    this.qualification.DeleteQualification(req, res)
+  }
+}
+
+class CRUD_QUALIFICATION_DB {
+  constructor(user) {
+    this.user = user
   }
 
   CreateQualification(req, res) {
@@ -101,4 +119,16 @@ class QUALIFICATIONDB {
     );
   }
 }
-module.exports = QUALIFICATIONDB;
+class GET_QUALIFICATIONS {
+  GetQualifications(req, res) {
+    connection.query(
+      "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
+      (err, result, fields) => {
+        if (err) console.log(err);
+        return res.status(200).json(result);
+      }
+    );
+  }
+}
+module.exports = QUALIFICATION_DB;
+module.exports = GET_QUALIFICATIONS;

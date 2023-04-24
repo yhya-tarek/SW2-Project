@@ -3,22 +3,37 @@ const conn = new CONNECTION();
 const connection = conn.Connection();
 const bcrypt = require("bcrypt");
 
-class USERDB {
+//Dependency Inversion
+
+class USER_DB {
+  constructor(req, res) {
+    this.user = new CRUD_USER_DB(req, res)
+  }
+
+  ADD_USER() {
+    this.stripe.AddNewUser()
+  }
+
+  UPDATE_USER() {
+    this.stripe.UpdateUser()
+  }
+
+  DELETE_USER() {
+    this.stripe.DeleteUser()
+  }
+
+  GET_USER() {
+    this.stripe.GetUser()
+  }
+}
+
+class CRUD_USER_DB {
   constructor(req, res) {
     this.res = res;
     this.req = req;
   }
 
-  GetUsers() {
-    connection.query("select * from user", (err, result) => {
-      if (err) {
-        console.log(err);
-        this.res.status(404).json("failed to read files");
-      } else {
-        this.res.status(200).json(result);
-      }
-    });
-  }
+
 
   GetUser() {
     const { user_id } = this.req.params;
@@ -142,4 +157,18 @@ class USERDB {
   }
 }
 
-module.exports = USERDB;
+class GET_USERS {
+  GetUsers() {
+    connection.query("select * from user", (err, result) => {
+      if (err) {
+        console.log(err);
+        this.res.status(404).json("failed to read files");
+      } else {
+        this.res.status(200).json(result);
+      }
+    });
+  }
+}
+
+module.exports = USER_DB;
+module.exports = GET_USERS;

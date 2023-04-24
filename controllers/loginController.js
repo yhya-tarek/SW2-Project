@@ -2,6 +2,9 @@ const CONNECTION = require("../db/connection");
 const conn = new CONNECTION();
 const connection = conn.Connection();
 const bcrypt = require("bcrypt");
+
+//Single Responsibility
+
 class LOGIN {
   loginAuth = () => {
     return async (req, res) => {

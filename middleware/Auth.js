@@ -1,5 +1,27 @@
+//Dependency Inversion
+
 class AUTH {
-  authLogin = () => {
+
+  constructor(user) {
+    this.auth = new Auth(user)
+  }
+
+  Auth_Login() {
+    this.auth.authLogin()
+  }
+
+  Auth_Role(type) {
+    this.auth.authRole(type)
+  }
+
+}
+
+class Auth {
+  constructor(user) {
+    this.user = user
+  }
+
+  authLogin() {
     return (req, res, next) => {
       if (!req.session.Email) {
         res.status(401);
@@ -10,7 +32,7 @@ class AUTH {
     };
   };
 
-  authRole = (type) => {
+  authRole(type) {
     return (req, res, next) => {
       if (req.session.type !== type) {
         res.status(401);
