@@ -1,8 +1,11 @@
 const router = require("express").Router();
-const AUTH = require("../middleware/Auth");
-const auth = new AUTH();
-const QUALIFICATION = require("../controllers/qualificationController");
-const qualification = new QUALIFICATION();
+const { USERAUTH, Auth } = require("../middleware/Auth");
+const auth = new USERAUTH(new Auth());
+const {
+  QUALIFICATION,
+  CRUD_QUALIFICATION,
+} = require("../controllers/qualificationController");
+const qualification = new QUALIFICATION(new CRUD_QUALIFICATION());
 
 router.get("/", qualification.getQualifications());
 

@@ -4,35 +4,48 @@ const connection = conn.Connection();
 //Dependency Inversion
 
 class JOBSDB {
-
-  constructor(user) {
-    this.jobDB = new CRUD_JOBSDB(user)
+  constructor(jobDB) {
+    this.jobDB = jobDB;
   }
 
-  create_job() {
-    this.jobDB.CreateJob(req, res)
+  CreateJob() {
+    this.jobDB.CreateJob();
   }
 
-  update_job() {
-    this.jobDB.UpdateJob(req, res)
+  UpdateJob() {
+    this.jobDB.UpdateJob();
   }
-  delete_job() {
-    this.jobDB.DeleteJOb(req, res)
+  DeleteJOb() {
+    this.jobDB.DeleteJOb();
   }
 
-  get_job() {
-    this.jobDB.GetJob(req, res)
+  GetJob() {
+    this.jobDB.GetJob();
+  }
+  GetJobs() {
+    this.jobDB.GetJobs();
   }
 }
 
 class CRUD_JOBSDB {
-  constructor(user) {
-    this.user = user
+  constructor(req, res) {
+    this.req = req;
+    this.res = res;
   }
 
-  CreateJob(req, res) {
+  GetJobs() {
+    const sql = ` SELECT *
+                      FROM job
+                      `;
+    connection.query(sql, (err, data) => {
+      if (err) return res.json(err);
+      return res.json(data);
+    });
+  }
+
+  CreateJob() {
     const date = new Date();
-    const newData = req.body;
+    const newData = this.req.body;
     let qualification_ids = [];
     for (let i = 0; i < newData.qualification.length || i === 0; i++) {
       connection.query(
@@ -56,18 +69,18 @@ class CRUD_JOBSDB {
               },
               (err, result, fields) => {
                 if (err) {
-                  return res.status(500).json(err);
+                  return this.res.status(500).json(err);
                 } else {
                   let id = result.insertId;
                   qualification_ids.forEach((elem) => {
                     const sql = `insert into job_qualifications (qualification_id, job_id) values (${elem.qualification_id}, ${id})`;
                     connection.query(sql, (err, result) => {
                       if (err) {
-                        return res.status(500).json(err);
+                        return this.res.status(500).json(err);
                       }
                     });
                   });
-                  return res
+                  return this.res
                     .status(201)
                     .json("job has been added successfully");
                 }
@@ -79,9 +92,9 @@ class CRUD_JOBSDB {
     }
   }
 
-  UpdateJob(req, res) {
-    const { id } = req.params;
-    const newData = req.body;
+  UpdateJob() {
+    const { id } = this.req.params;
+    const newData = this.req.body;
     let qualification_ids = [];
     for (let i = 0; i < newData.qualification.length || i === 0; i++) {
       connection.query(
@@ -95,7 +108,7 @@ class CRUD_JOBSDB {
             connection.query(
               `delete from job_qualifications where job_id in (${id})`,
               (err, result, fields) => {
-                if (err) throw res.status(500).send(err);
+                if (err) throw this.res.status(500).send(err);
               }
             );
             connection.query(
@@ -111,17 +124,17 @@ class CRUD_JOBSDB {
               ],
               (err, result, fields) => {
                 if (err) {
-                  return res.status(500).json(err);
+                  return this.res.status(500).json(err);
                 } else {
                   qualification_ids.forEach((elem) => {
                     const sql = `insert into job_qualifications (qualification_id, job_id) values (${elem.qualification_id}, ${id})`;
                     connection.query(sql, (err, result) => {
                       if (err) {
-                        return res.status(500).json(err);
+                        return this.res.status(500).json(err);
                       }
                     });
                   });
-                  return res
+                  return this.res
                     .status(201)
                     .json("job has been updated successfully");
                 }
@@ -133,12 +146,12 @@ class CRUD_JOBSDB {
     }
   }
 
-  DeleteJOb(req, res) {
-    const { id } = req.params;
+  DeleteJOb() {
+    const { id } = this.req.params;
     connection.query(
       `delete from job_qualifications where job_id in (${id})`,
       (err, result, fields) => {
-        if (err) throw res.status(500).send(err);
+        if (err) throw this.res.status(500).send(err);
       }
     );
     connection.query(
@@ -146,18 +159,20 @@ class CRUD_JOBSDB {
       { job_id: id },
       (err, result) => {
         if (err) {
-          res.status(500).json({
+          this.res.status(500).json({
             message: "failed to delete the job",
           });
         } else {
-          res.status(200).json({ messge: "job has been deleted successfully" });
+          this.res
+            .status(200)
+            .json({ messge: "job has been deleted successfully" });
         }
       }
     );
   }
 
-  GetJob(req, res) {
-    const { job_id } = req.params;
+  GetJob() {
+    const { job_id } = this.req.params;
     const sql = ` SELECT *
                   FROM job
                   INNER JOIN job_qualifications 
@@ -172,16 +187,16 @@ class CRUD_JOBSDB {
   }
 }
 
-class GET_JOBS {
-  GetJobs(req, res) {
-    const sql = ` SELECT *
-                  FROM job
-                  `;
-    connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
-    });
-  }
-}
-module.exports = JOBSDB;
-module.exports = GET_JOBS;
+// class GET_JOBS {
+//   GetJobs() {
+//     const sql = ` SELECT *
+//                   FROM job
+//                   `;
+//     connection.query(sql, (err, data) => {
+//       if (err) return res.json(err);
+//       return res.json(data);
+//     });
+//   }
+// }
+module.exports = { JOBSDB, CRUD_JOBSDB };
+// module.exports = GET_JOBS;

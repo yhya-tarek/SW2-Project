@@ -1,10 +1,9 @@
 const router = require("express").Router();
-const AUTH = require("../middleware/Auth");
-const auth = new AUTH();
+const { USERAUTH, Auth } = require("../middleware/Auth");
+const auth = new USERAUTH(new Auth());
 const requests = require("../routes/request");
-const JOBS = require("../controllers/jobscontroller");
-const jobs = new JOBS();
-router.use("/requests", requests);
+const { JOBS, CRUD_JOBS } = require("../controllers/jobscontroller");
+const jobs = new JOBS(new CRUD_JOBS());
 
 router.get("/", jobs.getJobs());
 

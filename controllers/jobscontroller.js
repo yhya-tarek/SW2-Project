@@ -1,74 +1,81 @@
-const JOBSDB = require("../models/JobsDB");
+const { JOBSDB, CRUD_JOBSDB } = require("../models/JobsDB");
 
 //Dependancy Inversion
 
 class JOBS {
-  constructor(user) {
-    this.stripe = new CRUD_JOBS(user)
-  }
-
-  Create_Job() {
-    this.stripe.createJob()
-  }
-
-  Update_Job() {
-    this.stripe.updateJob()
-  }
-
-  delete_Job() {
-    this.stripe.deleteJob()
-  }
-
-  Get_Job() {
-    this.stripe.getJob()
-  }
-
-}
-
-class CRUD_JOBS {
-  constructor(user) {
-    this.user = user
+  constructor(jobs) {
+    this.jobs = jobs;
   }
 
   createJob() {
+    return this.jobs.createJob();
+  }
+
+  updateJob() {
+    return this.jobs.updateJob();
+  }
+
+  deleteJob() {
+    return this.jobs.deleteJob();
+  }
+
+  getJob() {
+    return this.jobs.getJob();
+  }
+  getJobs() {
+    return this.jobs.getJobs();
+  }
+}
+
+class CRUD_JOBS {
+  constructor() {}
+
+  getJobs = () => {
     return (req, res) => {
-      const jobsDB = new JOBSDB();
-      jobsDB.CreateJob(req, res);
+      const jobsDB = new JOBSDB(new CRUD_JOBSDB(req, res));
+      jobsDB.GetJobs();
     };
   };
+
+  createJob() {
+    return (req, res) => {
+      const jobsDB = new JOBSDB(new CRUD_JOBSDB(req, res));
+      jobsDB.CreateJob();
+    };
+  }
 
   updateJob() {
     return (req, res) => {
-      const jobsDB = new JOBSDB();
-      jobsDB.UpdateJob(req, res);
+      const jobsDB = new JOBSDB(new CRUD_JOBSDB(req, res));
+      jobsDB.UpdateJob();
     };
-  };
+  }
 
   deleteJob() {
     return (req, res) => {
-      const jobsDB = new JOBSDB();
-      jobsDB.DeleteJob(req, res);
+      const jobsDB = new JOBSDB(new CRUD_JOBSDB(req, res));
+      jobsDB.DeleteJob();
     };
-  };
+  }
 
   getJob() {
     return (req, res) => {
-      const jobsDB = new JOBSDB();
-      jobsDB.GetJob(req, res);
+      const jobsDB = new JOBSDB(new CRUD_JOBSDB(req, res));
+      jobsDB.GetJob();
     };
-  };
+  }
 }
 
 ///////DEPENDANCY INJECTION/////////////
 
-class GET_JOBS {
-  getJobs = () => {
-    return (req, res) => {
-      const jobsDB = new JOBSDB();
-      jobsDB.GetJobs(req, res);
-    };
-  };
-}
+// class GET_JOBS {
+//   getJobs = () => {
+//     return (req, res) => {
+//       const jobsDB = new JOBSDB(new CRUD_JOBSDB(req, res));
+//       jobsDB.GetJobs();
+//     };
+//   };
+// }
 
-module.exports = JOBS;
-module.exports = GET_JOBS;
+module.exports = { JOBS, CRUD_JOBS };
+// module.exports = GET_JOBS;

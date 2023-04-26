@@ -3,60 +3,72 @@ const conn = new CONNECTION();
 const connection = conn.Connection();
 //Dependency Inversion
 class REQUEST_DB {
-  constructor(user) {
-    this.req = new CRUD_REQUEST_DB(user)
+  constructor(requestDB) {
+    this.requestDB = requestDB;
   }
 
-  GET_REQUEST() {
-    this.request.GetRequest(req.res)
+  GetRequest() {
+    this.requestDB.GetRequest();
   }
 
-  SEND_REQUEST() {
-    this.request.SendRequest(req, res)
+  GetRequests() {
+    this.requestDB.GetRequests();
   }
 
-  RESPOND_TO_REQUEST() {
-    this.request.RespondToRequest(req, res)
+  SendRequest() {
+    this.requestDB.SendRequest();
   }
 
-  DELETE_REQUEST() {
-    this.request.DeleteRequest(req.res)
+  RespondToRequest() {
+    this.requestDB.RespondToRequest();
+  }
+
+  DeleteRequest() {
+    this.requestDB.DeleteRequest();
   }
 }
 
 class CRUD_REQUEST_DB {
-  constructor(user) {
-    this.user = user
+  constructor(req, res) {
+    this.req = req;
+    this.res = res;
   }
 
+  GetRequests() {
+    const sql = `SELECT * FROM request_job`;
+    connection.query(sql, (err, data) => {
+      if (err) return this.res.json(err);
+      return this.res.json(data);
+    });
+  }
 
-  GetRequest(req, res) {
-    const { user_id } = req.params;
+  GetRequest() {
+    const { user_id } = this.req.params;
     const sql = `SELECT * FROM request_job where user_id = ${user_id}`;
     connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
+      if (err) return this.res.json(err);
+      return this.res.json(data);
     });
   }
 
   SendRequest(req, res) {
-    const sql = `select * from request_job where user_id = ${req.body.user_id} and job_id = ${req.body.job_id}`;
+    const sql = `select * from request_job where user_id = ${this.req.body.user_id} and job_id = ${this.req.body.job_id}`;
     connection.query(sql, (err, result, fields) => {
       if (err) {
-        return res.json(err);
+        return this.res.json(err);
       } else if (!result[0]) {
         const date = new Date();
         const sql =
           "INSERT INTO request_job (`user_id`,`job_id`,`response`,`date`) VALUES (?)";
         const values = [
-          req.body.user_id,
-          req.body.job_id,
+          this.req.body.user_id,
+          this.req.body.job_id,
           3,
           date.toISOString().slice(0, 10),
         ];
         connection.query(sql, [values], (err, data) => {
-          if (err) return res.json(err);
-          return res.status(201).json(data);
+          if (err) return this.res.json(err);
+          return this.res.status(201).json(data);
         });
       } else {
         return res
@@ -67,37 +79,37 @@ class CRUD_REQUEST_DB {
   }
 
   RespondToRequest(req, res) {
-    const { user_id, job_id } = req.params;
-    const newData = req.body;
+    const { user_id, job_id } = this.req.params;
+    const newData = this.req.body;
     const sql = `update request_job set response = "${newData.response}" where user_id = ${user_id} and job_id = ${job_id}`;
     connection.query(sql, (err) => {
       if (err) {
-        res.status(400).json({ msg: err.sqlMessage });
+        this.res.status(400).json({ msg: err.sqlMessage });
       } else {
-        res.status(200).json({ msg: "updated successfully" });
+        this.res.status(200).json({ msg: "updated successfully" });
       }
     });
   }
 
   DeleteRequest(req, res) {
-    const user_id = req.params.user_id;
-    const job_id = req.params.job_id;
+    const user_id = this.req.params.user_id;
+    const job_id = this.req.params.job_id;
     const sql = `DELETE FROM request_job WHERE user_id = ${user_id} and job_id = ${job_id}`;
     connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
+      if (err) return this.res.json(err);
+      return this.res.json(data);
     });
   }
 }
 
-class GET_REQUESTS {
-  GetRequests(req, res) {
-    const sql = `SELECT * FROM request_job`;
-    connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
-    });
-  }
-}
-module.exports = REQUEST_DB;
-module.exports = GET_REQUESTS;
+// class GET_REQUESTS {
+//   GetRequests(req, res) {
+//     const sql = `SELECT * FROM request_job`;
+//     connection.query(sql, (err, data) => {
+//       if (err) return this.res.json(err);
+//       return this.res.json(data);
+//     });
+//   }
+// }
+module.exports = { REQUEST_DB, CRUD_REQUEST_DB };
+// module.exports = GET_REQUESTS;

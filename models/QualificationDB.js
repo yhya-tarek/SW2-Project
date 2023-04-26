@@ -5,34 +5,39 @@ const connection = conn.Connection();
 //Dependency Inversion
 
 class QUALIFICATION_DB {
-  constructor(user) {
-    this.qualification = new CRUD_QUALIFICATION_DB(user)
+  constructor(qualificationDB) {
+    this.qualification = qualificationDB;
   }
 
-  create_qualification() {
-    this.qualification.CreateQualification(req, res)
+  CreateQualification() {
+    this.qualification.CreateQualification();
   }
 
-  get_qualification() {
-    this.qualification.GetQualification(req, res)
+  GetQualification() {
+    this.qualification.GetQualification();
   }
 
-  update_qualification() {
-    this.qualification.UpdateQualification(req, res)
+  GetQualifications() {
+    this.qualification.GetQualifications();
   }
 
-  delete_qualification() {
-    this.qualification.DeleteQualification(req, res)
+  UpdateQualification() {
+    this.qualification.UpdateQualification();
+  }
+
+  DeleteQualification() {
+    this.qualification.DeleteQualification();
   }
 }
 
 class CRUD_QUALIFICATION_DB {
-  constructor(user) {
-    this.user = user
+  constructor(req, res) {
+    this.req = req;
+    this.res = res;
   }
 
-  CreateQualification(req, res) {
-    const data = req.body;
+  CreateQualification() {
+    const data = this.req.body;
     connection.query(
       "insert into qualification set ? ",
       {
@@ -41,9 +46,9 @@ class CRUD_QUALIFICATION_DB {
       },
       (err, result, fields) => {
         if (err) {
-          return res.status(400).json(err);
+          return this.res.status(400).json(err);
         } else {
-          return res.status(201).json({
+          return this.res.status(201).json({
             message: "qualification has been created successfully",
           });
         }
@@ -51,16 +56,16 @@ class CRUD_QUALIFICATION_DB {
     );
   }
 
-  GetQualification(req, res) {
-    const { id } = req.params;
+  GetQualification() {
+    const { id } = this.req.params;
     connection.query(
       "select * from qualification where ? ",
       { qualification_id: id },
       (err, result, fields) => {
         if (result[0]) {
-          return res.status(200).json(result[0]);
+          return this.res.status(200).json(result[0]);
         } else {
-          return res.status(404).json({
+          return this.res.status(404).json({
             message: "qualification not found",
           });
         }
@@ -68,9 +73,19 @@ class CRUD_QUALIFICATION_DB {
     );
   }
 
-  UpdateQualification(req, res) {
-    const { id } = req.params;
-    const data = req.body;
+  GetQualifications() {
+    connection.query(
+      "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
+      (err, result, fields) => {
+        if (err) console.log(err);
+        return this.res.status(200).json(result);
+      }
+    );
+  }
+
+  UpdateQualification() {
+    const { id } = this.req.params;
+    const data = this.req.body;
 
     connection.query(
       "update qualification set ? where ? ",
@@ -87,18 +102,18 @@ class CRUD_QUALIFICATION_DB {
             .status(500)
             .json({ message: "failed to update the qualification" });
         } else {
-          return res.status(200).json("qualification updated");
+          return this.res.status(200).json("qualification updated");
         }
       }
     );
   }
 
-  DeleteQualification(req, res) {
-    const { id } = req.params;
+  DeleteQualification() {
+    const { id } = this.req.params;
     connection.query(
       `delete from job_qualifications where qualification_id in (${id})`,
       (err, result, fields) => {
-        if (err) throw res.status(500).send(err);
+        if (err) throw this.res.status(500).send(err);
       }
     );
     connection.query(
@@ -106,7 +121,7 @@ class CRUD_QUALIFICATION_DB {
       { qualification_id: id },
       (err, result) => {
         if (err) {
-          return res.status(500).json({
+          return this.res.status(500).json({
             err,
             message: "failed to delete the qualification",
           });
@@ -120,15 +135,18 @@ class CRUD_QUALIFICATION_DB {
   }
 }
 class GET_QUALIFICATIONS {
-  GetQualifications(req, res) {
+  GetQualifications() {
     connection.query(
       "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
       (err, result, fields) => {
         if (err) console.log(err);
-        return res.status(200).json(result);
+        return this.res.status(200).json(result);
       }
     );
   }
 }
-module.exports = QUALIFICATION_DB;
-module.exports = GET_QUALIFICATIONS;
+module.exports = {
+  QUALIFICATION_DB,
+  CRUD_QUALIFICATION_DB,
+  // GET_QUALIFICATIONS,
+};

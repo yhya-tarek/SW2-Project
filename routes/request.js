@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const AUTH = require("../middleware/Auth");
-const auth = new AUTH();
+const { USERAUTH, Auth } = require("../middleware/Auth");
+const auth = new USERAUTH(new Auth());
 
-const REQUEST = require("../controllers/requestController");
-const request = new REQUEST();
+const { REQUEST, CRUD_REQUEST } = require("../controllers/requestController");
+const crud_request = new CRUD_REQUEST();
+const request = new REQUEST(crud_request);
 //GET REQUESTS
 router.get("/", request.getRequests());
 

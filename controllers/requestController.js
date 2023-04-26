@@ -1,74 +1,80 @@
-const REQUESTDB = require("../models/RequestDb");
+const { REQUEST_DB, CRUD_REQUEST_DB } = require("../models/RequestDb");
 
 class REQUEST {
-
-  constructor(user) {
-    this.request = new CRUD_REQUEST(user)
+  constructor(request) {
+    this.request = request;
   }
 
-  GET_REQUEST() {
-    this.request.getRequest()
-  }
-
-  SEND_REQUEST() {
-    this.request.sendRequest()
-  }
-
-  RESPOND_TO_REQUEST() {
-    this.request.respondToRequest()
-  }
-
-  DELETE_REQUEST() {
-    this.request.deleteRequest()
-  }
-
-}
-
-class CRUD_REQUEST {
-  constructor(user) {
-    this.user = user
+  getRequests() {
+    return this.request.getRequests();
   }
 
   getRequest() {
+    return this.request.getRequest();
+  }
+
+  sendRequest() {
+    return this.request.sendRequest();
+  }
+
+  respondToRequest() {
+    return this.request.respondToRequest();
+  }
+
+  deleteRequest() {
+    return this.request.deleteRequest();
+  }
+}
+
+class CRUD_REQUEST {
+  constructor() {}
+
+  getRequests = () => {
     return (req, res) => {
-      const requestDB = new REQUESTDB();
-      requestDB.GetRequest(req, res);
+      const requestDB = new REQUEST_DB(new CRUD_REQUEST_DB(req, res));
+      requestDB.GetRequests();
     };
   };
+
+  getRequest() {
+    return (req, res) => {
+      const requestDB = new REQUEST_DB(new CRUD_REQUEST_DB(req, res));
+      requestDB.GetRequest();
+    };
+  }
 
   sendRequest() {
     return (req, res) => {
-      const requestDB = new REQUESTDB();
-      requestDB.SendRequest(req, res);
+      const requestDB = new REQUEST_DB(new CRUD_REQUEST_DB(req, res));
+      requestDB.SendRequest();
     };
-  };
+  }
 
   respondToRequest() {
     return (req, res) => {
-      const requestDB = new REQUESTDB();
+      const requestDB = new REQUEST_DB(new CRUD_REQUEST_DB(req, res));
       requestDB.RespondToRequest(req, res);
     };
-  };
+  }
 
   deleteRequest() {
     return (req, res) => {
-      const requestDB = new REQUESTDB();
+      const requestDB = new REQUEST_DB(new CRUD_REQUEST_DB(req, res));
       requestDB.DeleteRequest(req, res);
     };
-  };
-
+  }
 }
 
 ///////DEPENDANCY INJECTION/////////////
 
-class REQUESTS {
-  getRequests = () => {
-    return (req, res) => {
-      const requestDB = new REQUESTDB();
-      requestDB.GetRequests(req, res);
-    };
-  };
-}
+// class REQUESTS {
+//   getRequests = () => {
+//     return (req, res) => {
+//       const requestDB = new REQUEST_DB(new CRUD_REQUEST_DB(req ,res));
+//       requestDB.GetRequests(req, res);
+//     };
+//   };
+// }
 
-module.exports = REQUEST;
-module.exports = REQUESTS;
+module.exports = { REQUEST, CRUD_REQUEST };
+// module.exports = REQUESTS;

@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const AUTH = require("../middleware/Auth");
-const auth = new AUTH();
+const { USERAUTH, Auth } = require("../middleware/Auth");
+const auth = new USERAUTH(new Auth());
 
-const USER = require("../controllers/userController");
-const user = new USER();
+const { USER, CRUD_USER } = require("../controllers/userController");
+const user = new USER(new CRUD_USER());
 
 router.get("/", user.getApplicants());
 

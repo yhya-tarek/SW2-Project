@@ -1,53 +1,70 @@
-const USERDB = require("../models/UserDB");
+const { USER_DB, CRUD_USER_DB } = require("../models/UserDB");
 
 //Dependency Inversion
 
 class USER {
-
   constructor(user) {
-    this.stripe = new CRUD_USER(user)
+    this.user = user;
   }
 
-  ADD_USER() {
-    this.stripe.addNewUser()
+  addNewUser() {
+    return this.user.addNewUser();
   }
 
-  UPDATE_USER() {
-    this.stripe.updateUser()
+  updateUser() {
+    return this.user.updateUser();
   }
 
-  DELETE_USER() {
-    this.stripe.deleteUser()
+  deleteUser() {
+    return this.user.deleteUser();
   }
 
+  getApplicants() {
+    return this.user.getApplicants();
+  }
+
+  getApplicant() {
+    return this.user.getApplicant();
+  }
 }
 
 class CRUD_USER {
-  constructor(user) {
-    this.user = user
-  }
+  constructor() {}
 
   addNewUser = () => {
     return (req, res) => {
-      const userDB = new USERDB(req, res);
+      const userDB = new USER_DB(new CRUD_USER_DB(req, res));
       userDB.addNewUser();
     };
   };
 
   updateUser = () => {
     return (req, res) => {
-      const userDB = new USERDB(req, res);
+      const userDB = new USER_DB(new CRUD_USER_DB(req, res));
       userDB.updateUser();
     };
   };
 
   deleteUser = () => {
     return (req, res) => {
-      const userDB = new USERDB(req, res);
+      const userDB = new USER_DB(new CRUD_USER_DB(req, res));
       userDB.deleteUser();
     };
   };
 
+  getApplicants = () => {
+    return (req, res) => {
+      const userDB = new USER_DB(new CRUD_USER_DB(req, res));
+      userDB.GetUsers();
+    };
+  };
+
+  getApplicant = () => {
+    return (req, res) => {
+      const userDB = new USER_DB(new CRUD_USER_DB(req, res));
+      userDB.GetUser();
+    };
+  };
 }
 /////////////////////////////////
 //GET_APPLICANTS
@@ -56,34 +73,33 @@ class CRUD_USER {
 
 class APPLICANTS {
   constructor(user) {
-    this.app = new GET_APPLICANTS(user)
+    this.app = new GET_APPLICANTS(user);
   }
 
   GET_APPS() {
-    this.app.getApplicants()
+    this.app.getApplicants();
   }
 
   GET_APP() {
-    this.app.getApplicant()
+    this.app.getApplicant();
   }
 }
 
 class GET_APPLICANTS {
-
   constructor(user) {
-    this.user = user
+    this.user = user;
   }
 
   getApplicants = () => {
     return (req, res) => {
-      const userDB = new USERDB(req, res);
+      const userDB = new USER_DB(new CRUD_USER_DB(req, res));
       userDB.GetUsers();
     };
   };
 
   getApplicant = () => {
     return (req, res) => {
-      const userDB = new USERDB(req, res);
+      const userDB = new USER_DB(new CRUD_USER_DB(req, res));
       userDB.GetUser();
     };
   };
@@ -105,6 +121,6 @@ class GET_REQUESTS {
     };
   };
 }
-module.exports = USER;
-module.exports = APPLICANTS;
-module.exports = GET_REQUESTS;
+module.exports = { USER, CRUD_USER };
+// module.exports = APPLICANTS;
+// module.exports = GET_REQUESTS;

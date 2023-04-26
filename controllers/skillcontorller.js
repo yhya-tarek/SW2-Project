@@ -1,51 +1,56 @@
-const SKILLDB = require("../models/SkillDB");
+const { SKILL_DB, CRUD_SKILL_DB } = require("../models/SkillDB");
 
 class SKILL {
-
-  constructor(user) {
-    this.skill = new CRUD_SKILL(user)
+  constructor(skill) {
+    this.skill = skill;
   }
 
-  Create_Skill() {
-    this.skill.createSkills()
+  createSkills() {
+    return this.skill.createSkills();
   }
 
-  Delete_Skill() {
-    this.skill.deleteSkill()
+  deleteSkill() {
+    return this.skill.deleteSkill();
   }
 
-  Get_Skill() {
-    this.skill.getSkill()
+  getSkill() {
+    return this.skill.getSkill();
   }
 
+  getSkills() {
+    return this.skill.getSkills();
+  }
 }
 
 class CRUD_SKILL {
-  constructor(user) {
-    this.user = user
-  }
+  constructor() {}
 
   createSkills = () => {
     return (req, res) => {
-      const skillDb = new SKILLDB();
-      skillDb.CreateSkills(req, res);
+      const skillDb = new SKILL_DB(new CRUD_SKILL_DB(req, res));
+      skillDb.CreateSkills();
     };
   };
 
   deleteSkill = () => {
     return (req, res) => {
-      const skillDb = new SKILLDB();
-      skillDb.DeleteSkill(req, res);
+      const skillDb = new SKILL_DB(new CRUD_SKILL_DB(req, res));
+      skillDb.DeleteSkill();
     };
   };
 
   getSkill = () => {
     return (req, res) => {
-      const skillDb = new SKILLDB();
-      skillDb.GetSkill(req, res);
+      const skillDb = new SKILL_DB(new CRUD_SKILL_DB(req, res));
+      skillDb.GetSkill();
     };
   };
-
+  getSkills = () => {
+    return (req, res) => {
+      const skillDb = new SKILL_DB(new CRUD_SKILL_DB(req, res));
+      skillDb.GetSkills();
+    };
+  };
 }
 
 ///////DEPENDANCY INJECTION/////////////
@@ -53,10 +58,10 @@ class CRUD_SKILL {
 class SKILLS {
   getSkills = () => {
     return (req, res) => {
-      const skillDb = new SKILLDB();
-      skillDb.GetSkills(req, res);
+      const skillDb = new SKILL_DB(new CRUD_SKILL_DB(req, res));
+      skillDb.GetSkills();
     };
   };
 }
-module.exports = SKILL;
-module.exports = SKILLS;
+module.exports = { SKILL, CRUD_SKILL };
+// module.exports = SKILLS;

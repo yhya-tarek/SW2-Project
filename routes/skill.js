@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const AUTH = require("../middleware/Auth");
-const auth = new AUTH();
+const { USERAUTH, Auth } = require("../middleware/Auth");
+const auth = new USERAUTH(new Auth());
 
-const SKILL = require("../controllers/skillcontorller");
-const skill = new SKILL();
+const { SKILL, CRUD_SKILL } = require("../controllers/skillcontorller");
+const skill = new SKILL(new CRUD_SKILL());
 
 router.get("/", skill.getSkills());
 

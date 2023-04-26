@@ -6,24 +6,27 @@ const bcrypt = require("bcrypt");
 //Dependency Inversion
 
 class USER_DB {
-  constructor(req, res) {
-    this.user = new CRUD_USER_DB(req, res)
+  constructor(userDB) {
+    this.userDB = userDB;
   }
 
-  ADD_USER() {
-    this.stripe.AddNewUser()
+  AddNewUser() {
+    this.userDB.AddNewUser();
   }
 
-  UPDATE_USER() {
-    this.stripe.UpdateUser()
+  UpdateUser() {
+    this.userDB.UpdateUser();
   }
 
-  DELETE_USER() {
-    this.stripe.DeleteUser()
+  DeleteUser() {
+    this.userDB.DeleteUser();
   }
 
-  GET_USER() {
-    this.stripe.GetUser()
+  GetUser() {
+    this.userDB.GetUser();
+  }
+  GetUsers() {
+    this.userDB.GetUsers();
   }
 }
 
@@ -32,8 +35,6 @@ class CRUD_USER_DB {
     this.res = res;
     this.req = req;
   }
-
-
 
   GetUser() {
     const { user_id } = this.req.params;
@@ -155,6 +156,17 @@ class CRUD_USER_DB {
       }
     );
   }
+
+  GetUsers() {
+    connection.query("select * from user", (err, result) => {
+      if (err) {
+        console.log(err);
+        this.res.status(404).json("failed to read files");
+      } else {
+        this.res.status(200).json(result);
+      }
+    });
+  }
 }
 
 class GET_USERS {
@@ -170,5 +182,5 @@ class GET_USERS {
   }
 }
 
-module.exports = USER_DB;
-module.exports = GET_USERS;
+module.exports = { USER_DB, CRUD_USER_DB };
+// module.exports = GET_USERS;

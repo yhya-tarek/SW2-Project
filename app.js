@@ -4,8 +4,8 @@ const admin = require("./routes/admin");
 const login = require("./routes/login");
 const logout = require("./routes/logout");
 const jobs = require("./routes/jobs");
-const AUTH = require("./middleware/Auth");
-const auth = new AUTH();
+const { USERAUTH, Auth } = require("./middleware/Auth");
+const auth = new USERAUTH(new Auth());
 const cors = require("cors");
 const session = require("express-session");
 

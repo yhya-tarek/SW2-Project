@@ -1,25 +1,21 @@
 //Dependency Inversion
 
-class AUTH {
-
-  constructor(user) {
-    this.auth = new Auth(user)
+class USERAUTH {
+  constructor(auth) {
+    this.auth = auth;
   }
 
-  Auth_Login() {
-    this.auth.authLogin()
+  authLogin() {
+    return this.auth.authLogin();
   }
 
-  Auth_Role(type) {
-    this.auth.authRole(type)
+  authRole(type) {
+    return this.auth.authRole(type);
   }
-
 }
 
 class Auth {
-  constructor(user) {
-    this.user = user
-  }
+  constructor() {}
 
   authLogin() {
     return (req, res, next) => {
@@ -30,7 +26,7 @@ class Auth {
 
       next();
     };
-  };
+  }
 
   authRole(type) {
     return (req, res, next) => {
@@ -41,7 +37,7 @@ class Auth {
 
       next();
     };
-  };
+  }
 }
 
-module.exports = AUTH;
+module.exports = { USERAUTH, Auth };
