@@ -65,16 +65,4 @@ class CRUD_REQUEST {
   }
 }
 
-///////DEPENDANCY INJECTION/////////////
-
-// class REQUESTS {
-//   getRequests = () => {
-//     return (req, res) => {
-//       const requestDB = new REQUEST_DB(new CRUD_REQUEST_DB(req ,res));
-//       requestDB.GetRequests(req, res);
-//     };
-//   };
-// }
-
 module.exports = { REQUEST, CRUD_REQUEST };
-// module.exports = REQUESTS;

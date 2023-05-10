@@ -32,11 +32,37 @@ class QUALIFICATION_DB {
 
 class CRUD_QUALIFICATION_DB {
   constructor(req, res) {
+    this.mysqldb = new CRUD_MYSQL_QUALIFICATION_DB(req, res);
+  }
+
+  GetQualifications() {
+    this.mysqldb.MysqlGetQualifications();
+  }
+
+  GetQualification() {
+    this.mysqldb.MysqlGetQualification();
+  }
+
+  CreateQualification() {
+    this.mysqldb.MysqlCreateQualification();
+  }
+
+  UpdateQualification() {
+    this.mysqldb.UpdateQualification();
+  }
+
+  DeleteQualification() {
+    this.mysqldb.MysqlDeleteQualification();
+  }
+}
+
+class CRUD_MYSQL_QUALIFICATION_DB {
+  constructor(req, res) {
     this.req = req;
     this.res = res;
   }
 
-  CreateQualification() {
+  MysqlCreateQualification() {
     const data = this.req.body;
     connection.query(
       "insert into qualification set ? ",
@@ -56,7 +82,7 @@ class CRUD_QUALIFICATION_DB {
     );
   }
 
-  GetQualification() {
+  MysqlGetQualification() {
     const { id } = this.req.params;
     connection.query(
       "select * from qualification where ? ",
@@ -73,7 +99,7 @@ class CRUD_QUALIFICATION_DB {
     );
   }
 
-  GetQualifications() {
+  MysqlGetQualifications() {
     connection.query(
       "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
       (err, result, fields) => {
@@ -83,7 +109,7 @@ class CRUD_QUALIFICATION_DB {
     );
   }
 
-  UpdateQualification() {
+  MysqlUpdateQualification() {
     const { id } = this.req.params;
     const data = this.req.body;
 
@@ -108,7 +134,7 @@ class CRUD_QUALIFICATION_DB {
     );
   }
 
-  DeleteQualification() {
+  MysqlDeleteQualification() {
     const { id } = this.req.params;
     connection.query(
       `delete from job_qualifications where qualification_id in (${id})`,
@@ -134,19 +160,8 @@ class CRUD_QUALIFICATION_DB {
     );
   }
 }
-class GET_QUALIFICATIONS {
-  GetQualifications() {
-    connection.query(
-      "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
-      (err, result, fields) => {
-        if (err) console.log(err);
-        return this.res.status(200).json(result);
-      }
-    );
-  }
-}
+
 module.exports = {
   QUALIFICATION_DB,
   CRUD_QUALIFICATION_DB,
-  // GET_QUALIFICATIONS,
 };

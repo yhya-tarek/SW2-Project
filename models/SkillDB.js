@@ -27,13 +27,35 @@ class SKILL_DB {
 
 class CRUD_SKILL_DB {
   constructor(req, res) {
+    this.mysqldb = new CRUD_MYSQL_SKILL_DB(req, res);
+  }
+
+  GetSkills() {
+    this.mysqldb.MysqlGetSkills();
+  }
+
+  GetSkill() {
+    this.mysqldb.MysqlGetSkill();
+  }
+
+  CreateSkill() {
+    this.mysqldb.MysqlCreateSkill();
+  }
+
+  DeleteSkill() {
+    this.mysqldb.MysqlDeleteSkill();
+  }
+}
+
+class CRUD_MYSQL_SKILL_DB {
+  constructor(req, res) {
     this.req = req;
     this.res = res;
   }
 
-  GetSkill() {
-    const { user_id } = this.req.params;
-    const sql = `select * from skill inner join user_skills on skill.skill_id = user_skills.skill_id`;
+  MysqlGetSkill() {
+    const { skill } = this.req.params;
+    const sql = `select * from skill inner join user_skills on skill.skill_id = user_skills.skill_id where skill.skill_id = ${skill}`;
     connection.query(sql, (err, result) => {
       if (err) {
         console.log(err);
@@ -47,7 +69,7 @@ class CRUD_SKILL_DB {
     });
   }
 
-  GetSkills(req, res) {
+  MysqlGetSkills(req, res) {
     connection.query("select * from skill", (err, result) => {
       if (err) {
         console.log(err);
@@ -58,7 +80,7 @@ class CRUD_SKILL_DB {
     });
   }
 
-  CreateSkill(req, res) {
+  MysqlCreateSkill(req, res) {
     const newData = this.req.body;
     const sql = `SELECT * FROM skill where skill = "${newData.skill}"`;
     connection.query(sql, (err, result, fields) => {
@@ -80,7 +102,7 @@ class CRUD_SKILL_DB {
     });
   }
 
-  DeleteSkill(req, res) {
+  MysqlDeleteSkill(req, res) {
     const { skill_id } = this.req.params;
     sql = `delete from skill where skill_id = ${skill_id}`;
     connection.query(sql, (err) => {

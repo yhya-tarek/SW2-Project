@@ -20,6 +20,7 @@ class LOGIN {
               req.session.Email = data.Email;
               req.session.type = result[0].type;
               req.session.name = result[0].name;
+              req.session.user_id = result[0].user_id;
               connection.query(
                 `update user set status = "active" where user_id = ${result[0].user_id}`,
                 (err) => {

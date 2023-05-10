@@ -54,13 +54,10 @@ class CRUD_QUALIFICATION {
 
   getQualifications = () => {
     return (req, res) => {
-      connection.query(
-        "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
-        (err, result, fields) => {
-          if (err) console.log(err);
-          return res.status(200).json(result);
-        }
+      const qualificationDB = new QUALIFICATION_DB(
+        new CRUD_QUALIFICATION_DB(req, res)
       );
+      qualificationDB.GetQualifications();
     };
   };
 
@@ -83,20 +80,4 @@ class CRUD_QUALIFICATION {
   }
 }
 
-// ///////DEPENDANCY INJECTION/////////////
-
-// class GET_QUALIFICATIONS {
-//   getQualifications = () => {
-//     return (req, res) => {
-//       connection.query(
-//         "select * from qualification inner join job_qualifications on qualification.qualification_id = job_qualifications.qualification_id",
-//         (err, result, fields) => {
-//           if (err) console.log(err);
-//           return res.status(200).json(result);
-//         }
-//       );
-//     };
-//   };
-// }
 module.exports = { QUALIFICATION, CRUD_QUALIFICATION };
-// module.exports = GET_QUALIFICATIONS;

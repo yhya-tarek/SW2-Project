@@ -7,15 +7,14 @@ const connection = conn.Connection();
 class LOGOUT {
   logOut = () => {
     return (req, res) => {
-      const { user_id } = req.body;
-      req.session.destroy();
       connection.query(
-        `update user set status = "in-active" where user_id = ${user_id}`,
+        `update user set status = "in-active" where user_id = ${req.session.user_id}`,
         (err) => {
           if (err) console.log(err);
         }
       );
-      return res.status(200).send();
+      req.session.destroy();
+      return res.status(200).send(success);
     };
   };
 }

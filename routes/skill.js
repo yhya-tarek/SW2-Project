@@ -7,7 +7,7 @@ const skill = new SKILL(new CRUD_SKILL());
 
 router.get("/", skill.getSkills());
 
-router.get("/:user_id", skill.getSkill());
+router.get("/:skill", skill.getSkill());
 
 router.post(
   "/",

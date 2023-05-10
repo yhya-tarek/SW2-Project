@@ -7,11 +7,11 @@ const qualifications = require("../routes/qualifications");
 
 //* fucntion read all applicant from DB
 
-router.use("/user", user);
+router.use("/users", user);
 
 router.use("/qualifications", qualifications);
 
-router.use("/request", request);
+router.use("/requests", request);
 
 router.use("/jobs", jobs);
 

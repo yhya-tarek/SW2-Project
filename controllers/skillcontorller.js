@@ -53,15 +53,4 @@ class CRUD_SKILL {
   };
 }
 
-///////DEPENDANCY INJECTION/////////////
-
-class SKILLS {
-  getSkills = () => {
-    return (req, res) => {
-      const skillDb = new SKILL_DB(new CRUD_SKILL_DB(req, res));
-      skillDb.GetSkills();
-    };
-  };
-}
 module.exports = { SKILL, CRUD_SKILL };
-// module.exports = SKILLS;

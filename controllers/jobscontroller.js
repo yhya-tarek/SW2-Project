@@ -66,16 +66,4 @@ class CRUD_JOBS {
   }
 }
 
-///////DEPENDANCY INJECTION/////////////
-
-// class GET_JOBS {
-//   getJobs = () => {
-//     return (req, res) => {
-//       const jobsDB = new JOBSDB(new CRUD_JOBSDB(req, res));
-//       jobsDB.GetJobs();
-//     };
-//   };
-// }
-
 module.exports = { JOBS, CRUD_JOBS };
-// module.exports = GET_JOBS;

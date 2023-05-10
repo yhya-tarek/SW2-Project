@@ -32,11 +32,37 @@ class USER_DB {
 
 class CRUD_USER_DB {
   constructor(req, res) {
+    this.mysqldb = new CRUD_MYSQL_USER_DB(req, res);
+  }
+
+  GetUsers() {
+    this.mysqldb.MysqlGetUsers();
+  }
+
+  GetUser() {
+    this.mysqldb.MysqlGetUser();
+  }
+
+  AddNewUser() {
+    this.mysqldb.MysqlAddNewUser();
+  }
+
+  UpdateUser() {
+    this.mysqldb.MysqlUpdateUser();
+  }
+
+  DeleteUser() {
+    this.mysqldb.MysqlDeleteUser();
+  }
+}
+
+class CRUD_MYSQL_USER_DB {
+  constructor(req, res) {
     this.res = res;
     this.req = req;
   }
 
-  GetUser() {
+  MysqlGetUser() {
     const { user_id } = this.req.params;
     connection.query(
       `select * from user where user_id = ${user_id}`,
@@ -51,10 +77,9 @@ class CRUD_USER_DB {
     );
   }
 
-  AddNewUser() {
+  MysqlAddNewUser() {
     const newData = this.req.body;
     let skill_ids = [];
-    // console.log(i);
     for (let i = 0; i < newData.skill.length || i === 0; i++) {
       connection.query(
         `select skill_id from skill where skill = "${newData.skill[i]}"`,
@@ -105,7 +130,7 @@ class CRUD_USER_DB {
     }
   }
 
-  UpdateUser() {
+  MysqlUpdateUser() {
     const { user_id } = this.req.params;
     const sql = `SELECT * FROM user where user_id = ${user_id}`;
     connection.query(sql, (err, result, fields) => {
@@ -121,6 +146,7 @@ class CRUD_USER_DB {
               Email: newData.Email,
               password: newData.password,
               phone: newData.phone,
+              type: newData.type,
               status: newData.status,
               bio: newData.bio,
             },
@@ -140,7 +166,7 @@ class CRUD_USER_DB {
     });
   }
 
-  DeleteUser() {
+  MysqlDeleteUser() {
     const { user_id } = this.req.params;
     connection.query(
       "delete from user where ?",
@@ -157,20 +183,7 @@ class CRUD_USER_DB {
     );
   }
 
-  GetUsers() {
-    connection.query("select * from user", (err, result) => {
-      if (err) {
-        console.log(err);
-        this.res.status(404).json("failed to read files");
-      } else {
-        this.res.status(200).json(result);
-      }
-    });
-  }
-}
-
-class GET_USERS {
-  GetUsers() {
+  MysqlGetUsers() {
     connection.query("select * from user", (err, result) => {
       if (err) {
         console.log(err);
@@ -183,4 +196,3 @@ class GET_USERS {
 }
 
 module.exports = { USER_DB, CRUD_USER_DB };
-// module.exports = GET_USERS;

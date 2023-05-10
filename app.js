@@ -29,7 +29,7 @@ app.use("/admin", auth.authLogin(), auth.authRole("admin"), admin);
 
 app.use("/login", login);
 
-app.use("/logout", logout);
+app.use("/logout", auth.authLogin(), logout);
 
 app.use("/jobs", jobs);
 

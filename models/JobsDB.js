@@ -29,21 +29,47 @@ class JOBSDB {
 
 class CRUD_JOBSDB {
   constructor(req, res) {
+    this.mysqldb = new CRUD_MYSQL_JOBS_DB(req, res);
+  }
+
+  GetJobs() {
+    this.mysqldb.MysqlGetJobs();
+  }
+
+  GetJobs() {
+    this.mysqldb.MysqlGetJobs();
+  }
+
+  CreateJob() {
+    this.mysqldb.MysqlCreateJob();
+  }
+
+  UpdateJob() {
+    this.mysqldb.MysqlCreateJob();
+  }
+
+  DeleteJOb() {
+    this.mysqldb.MysqlDeleteJOb();
+  }
+}
+
+class CRUD_MYSQL_JOBS_DB {
+  constructor(req, res) {
     this.req = req;
     this.res = res;
   }
 
-  GetJobs() {
+  MysqlGetJobs() {
     const sql = ` SELECT *
                       FROM job
                       `;
     connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
+      if (err) return this.res.json(err);
+      return this.res.json(data);
     });
   }
 
-  CreateJob() {
+  MysqlCreateJob() {
     const date = new Date();
     const newData = this.req.body;
     let qualification_ids = [];
@@ -92,7 +118,7 @@ class CRUD_JOBSDB {
     }
   }
 
-  UpdateJob() {
+  MysqlUpdateJob() {
     const { id } = this.req.params;
     const newData = this.req.body;
     let qualification_ids = [];
@@ -146,7 +172,7 @@ class CRUD_JOBSDB {
     }
   }
 
-  DeleteJOb() {
+  MysqlDeleteJOb() {
     const { id } = this.req.params;
     connection.query(
       `delete from job_qualifications where job_id in (${id})`,
@@ -171,7 +197,7 @@ class CRUD_JOBSDB {
     );
   }
 
-  GetJob() {
+  MysqlGetJob() {
     const { job_id } = this.req.params;
     const sql = ` SELECT *
                   FROM job
@@ -181,22 +207,10 @@ class CRUD_JOBSDB {
                       ON job_qualifications.qualification_id=qualification.qualification_id
                       where job.job_id = ${job_id}`;
     connection.query(sql, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
+      if (err) return this.res.json(err);
+      return this.res.json(data);
     });
   }
 }
 
-// class GET_JOBS {
-//   GetJobs() {
-//     const sql = ` SELECT *
-//                   FROM job
-//                   `;
-//     connection.query(sql, (err, data) => {
-//       if (err) return res.json(err);
-//       return res.json(data);
-//     });
-//   }
-// }
 module.exports = { JOBSDB, CRUD_JOBSDB };
-// module.exports = GET_JOBS;
